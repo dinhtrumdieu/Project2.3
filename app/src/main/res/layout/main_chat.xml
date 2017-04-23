@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:background="#2F4159"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+        android:paddingBottom="40dp"
+        android:paddingTop="10dp"
+        android:id="@+id/list_chat"
+        android:dividerHeight="16dp"
+        android:divider="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:background="#246161"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="55dp"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:layout_weight="9"
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorPrimary"
+                android:hint="Message..."
+                android:textColorHint="#B7BBC2" />
+            <android.support.design.widget.FloatingActionButton
+                android:layout_weight="1"
+                android:id="@+id/btChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:src="@drawable/ic_send"
+                android:tint="@android:color/holo_blue_bright"
+                app:fabSize="mini" />
+        </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabFb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="62dp"
+            android:src="@drawable/ic_action_add"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabYou"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="122dp"
+            android:src="@drawable/ic_action_add"
+            android:visibility="gone"
+            app:backgroundTint="@android:color/holo_blue_dark" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="182dp"
+            android:src="@drawable/ic_action_camera"
+            android:visibility="gone"
+            app:backgroundTint="@android:color/holo_purple" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabGoogle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="242dp"
+            android:src="@drawable/ic_action_add"
+            android:visibility="gone"
+            app:backgroundTint="@android:color/holo_orange_light" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabChoose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/ic_action_add" />
+    </RelativeLayout>
+
+</FrameLayout>
