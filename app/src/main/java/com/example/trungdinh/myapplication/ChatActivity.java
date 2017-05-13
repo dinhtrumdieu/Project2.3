@@ -1,32 +1,47 @@
 package com.example.trungdinh.myapplication;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.trungdinh.myapplication.adapter.ChatArrayAdapter;
 import com.example.trungdinh.myapplication.models.ChatMessage;
+import com.example.trungdinh.myapplication.models.Message;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 /**
  * Created by TrungDinh on 3/24/2017.
@@ -35,31 +50,41 @@ import java.util.List;
 public class ChatActivity extends AppCompatActivity {
 
     DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
-    FloatingActionButton  btChat;
+    ImageView  btChat , btAddImage;
     EditText edtInput;
     ListView lvChat;
     ChatArrayAdapter adapter;
     List<ChatMessage> list;
     String id , idMy;
+    String name , images , nameMy;
 
     int check = 0;
 
-    static int RESULT_LOAD_IMAGES = 1;
+    // các đối tượng của sentImages;
+    static boolean tam = false;
+    Bitmap bitmapresult;
+    ImageView imageSent;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    // storeage
+    final StorageReference storageRef = storage.getReference();
+    private static int RESULT_LOAD_IMAGES = 1;
 
-    // floating animation
-    FloatingActionButton fabChoose , fabFB , fabYoutube , fabCamera,fabGoogle;
-    Animation fabOpen, fabClose , fabRAnti , fabRclock;
-    boolean isOpen = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_chat);
 
+
         id = getIntent().getStringExtra("IdFriend");
         idMy = getIntent().getStringExtra("IdMy");
+        nameMy = getIntent().getStringExtra("nameMy");
+        name = getIntent().getStringExtra("name");
+        images = getIntent().getStringExtra("images");
         // ánh xạ
         AnhXa();
+        OverScrollDecoratorHelper.setUpOverScroll(lvChat);
+
         list = new ArrayList<>();
         adapter = new ChatArrayAdapter(this , R.layout.chat,list);
         lvChat.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
@@ -67,108 +92,25 @@ public class ChatActivity extends AppCompatActivity {
         // scroll listview
         lvChat.setStackFromBottom(false);
 
-        root.child("message").child(idMy).child(id).push().setValue(new ChatMessage("Hello Định","Ngọc Thạch",false,false));
-        root.child("message").child(id).child(idMy).push().setValue(new ChatMessage("Hello Định","Ngọc Thạch",true,false));
 
-        // xử lý float animation
-        fabChoose = (FloatingActionButton) findViewById(R.id.fabChoose);
-        fabFB = (FloatingActionButton) findViewById(R.id.fabFb);
-        fabYoutube = (FloatingActionButton) findViewById(R.id.fabYou);
-        fabCamera = (FloatingActionButton) findViewById(R.id.fabCamera);
-        fabGoogle = (FloatingActionButton) findViewById(R.id.fabGoogle);
-
-        fabOpen = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_open);
-        fabClose = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
-        fabRAnti = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rote_anticlockwise);
-        fabRclock = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rote_clockwise);
-
-        fabChoose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isOpen){
-
-                    // hiển thị icon
-                    fabFB.setVisibility(View.VISIBLE);
-                    fabYoutube.setVisibility(View.VISIBLE);
-                    fabGoogle.setVisibility(View.VISIBLE);
-                    fabCamera.setVisibility(View.VISIBLE);
-                    // set animationn
-                    fabFB.startAnimation(fabClose);
-                    fabYoutube.startAnimation(fabClose);
-                    fabGoogle.startAnimation(fabClose);
-                    fabCamera.startAnimation(fabClose);
-                    fabChoose.startAnimation(fabRAnti);
-                    fabFB.setClickable(false);
-                    isOpen = false;
-                }else{
-                    // hiển thị icon
-                    fabFB.setVisibility(View.GONE);
-                    fabYoutube.setVisibility(View.GONE);
-                    fabGoogle.setVisibility(View.GONE);
-                    fabCamera.setVisibility(View.GONE);
-
-                    // set animation
-                    fabFB.startAnimation(fabOpen);
-                    fabYoutube.startAnimation(fabOpen);
-                    fabGoogle.startAnimation(fabOpen);
-                    fabCamera.startAnimation(fabOpen);
-                    fabChoose.startAnimation(fabRclock);
-                    fabFB.setClickable(true);
-                    isOpen = true;
-                }
-            }
-        });
-
-        fabFB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = getOpenFacebookIntent(ChatActivity.this);
-                startActivity(intent);
-            }
-        });
-
-        fabYoutube.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = getOpenYouTubeIntent(ChatActivity.this);
-                startActivity(intent);
-            }
-        });
-
-        fabGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = getOpenGPlusIntent(ChatActivity.this);
-                startActivity(intent);
-            }
-        });
-
-        fabCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent , RESULT_LOAD_IMAGES);
-            }
-        });
         // lấy dữ liệu
         root.child("message").child(idMy).child(id).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     ChatMessage message = dataSnapshot.getValue(ChatMessage.class);
+
                     list.add(message);
-                    // Log.d("size","giatri"+list.size());
                     if(list.size() > 9 && check  == 0){
                         check = 1;
                         lvChat.setStackFromBottom(true);
                     }
-                    Log.d("voday1","giatri");
                     adapter.notifyDataSetChanged();
 
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.d("voday","voday");
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -188,17 +130,36 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
+        // sự kiện gửi ảnh
+        imageSent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent , RESULT_LOAD_IMAGES);
+            }
+        });
 
         btChat.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
 
-                  root.child("message").child(idMy).child(id).push().setValue(new ChatMessage(edtInput.getText().toString(),"Trung Định",false,false));
-                  root.child("message").child(id).child(idMy).push().setValue(new ChatMessage(edtInput.getText().toString(),"Trung Định",true,false));
+                  String time = xulyTime();
+                  Log.d("toigian",Calendar.getInstance().getTime().toString().substring(0,16));
+
+                  root.child("message").child(idMy).child(id).push().setValue(new ChatMessage(edtInput.getText().toString(),nameMy,false,false));
+                  root.child("message").child(id).child(idMy).push().setValue(new ChatMessage(edtInput.getText().toString(),nameMy,true,false));
+
+
+                  //Map<String, Object> nickname = new HashMap<String, Object>();
+                  //nickname.put("ghichu", "Android là hệ điều hành phổ biến trên điện thoại di động");
+
+                  root.child("UserMessage").child(idMy).child(id).setValue(new Message(id,name , edtInput.getText().toString(),time,images));
+                  root.child("UserMessage").child(id).child(idMy).setValue(new Message(idMy,nameMy , edtInput.getText().toString(),time,images));
                   edtInput.setText("");
               }
         });
 
+        // nhận sự kiện phím enter hoặc xuống dòng
         edtInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -211,50 +172,125 @@ public class ChatActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        edtInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d("HasFocus",""+hasFocus);
+                if(!hasFocus){
+                    hideKeyboard(v);
+                }
+            }
+        });
+
+        // bắt sự kiện editText có nhập dữ liệu
+        edtInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    btAddImage.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    btAddImage.setVisibility(View.GONE);
+                    btChat.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                    if(s.length()> 0){
+                        btChat.setVisibility(View.VISIBLE);
+                        btAddImage.setVisibility(View.GONE);
+                    }else{
+                        btChat.setVisibility(View.GONE);
+                        btAddImage.setVisibility(View.VISIBLE);
+
+                    }
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(tam){
+            tam = false;
+            Calendar calendar = Calendar.getInstance();
+            StorageReference mountainsRef = storageRef.child("images"+ calendar.getTimeInMillis());
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmapresult.compress(Bitmap.CompressFormat.PNG, 100, baos);
+            byte[] data1 = baos.toByteArray();
+
+            UploadTask uploadTask = mountainsRef.putBytes(data1);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(Exception exception) {
+                    // Handle unsuccessful uploads
+                    Toast.makeText(ChatActivity.this ,"Thất bại",Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    String time = xulyTime();
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    root.child("message").child(idMy).child(id).push().setValue(new ChatMessage(downloadUrl.toString(),name,false,true));
+                    root.child("message").child(id).child(idMy).push().setValue(new ChatMessage(downloadUrl.toString(),name,true,true));
+
+                    root.child("UserMessage").child(idMy).child(id).setValue(new Message(id,name ,"[hình ảnh]",time,images));
+                    root.child("UserMessage").child(id).child(idMy).setValue(new Message(idMy,nameMy ,"[hình ảnh]",time,images));
+
+                    Toast.makeText(ChatActivity.this ,"Thành công",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     public void AnhXa(){
-        btChat = ( FloatingActionButton) findViewById(R.id.btChat);
+        btChat = (ImageView) findViewById(R.id.btChat);
+        btAddImage = (ImageView) findViewById(R.id.btAddImage);
         edtInput = (EditText) findViewById(R.id.input);
         lvChat = (ListView) findViewById(R.id.list_chat);
+
+        // send
+        imageSent = (ImageView) findViewById(R.id.imagesSent);
     }
 
-    public static Intent getOpenYouTubeIntent(Context context) {
+    // hide keyboard
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
-        try {
-            context.getPackageManager()
-                    .getPackageInfo("com.google.android.youtube", 0); //Checks if YT is even installed.
-            return new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://www.youtube.com/karthikm128")); //Trys to make intent with YT's URI
-        } catch (Exception e) {
-            return new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://www.youtube.com/karthikm128")); //catches and opens a url to the desired page
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RESULT_LOAD_IMAGES && resultCode == RESULT_OK && data != null){
+            bitmapresult = (Bitmap) data.getExtras().get("data");
+            tam = true;
         }
     }
 
-    public static Intent getOpenFacebookIntent(Context context) {
-
-        try {
-            context.getPackageManager()
-                    .getPackageInfo("com.facebook.katana", 0); //Checks if FB is even installed.
-            return new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("fb://page/376227335860239")); //Trys to make intent with FB's URI
-        } catch (Exception e) {
-            return new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://www.facebook.com/karthikofficialpage")); //catches and opens a url to the desired page
-        }
-    }
-
-    public static Intent getOpenGPlusIntent(Context context) {
-
-        try {
-            context.getPackageManager()
-                    .getPackageInfo("com.google.android.apps.plus", 0); //Checks if G+ is even installed.
-            return new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://plus.google.com/u/0/+KarthikM128")); //Trys to make intent with G+'s URI
-        } catch (Exception e) {
-            return new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://plus.google.com/u/0/+KarthikM128")); //catches and opens a url to the desired page
-        }
+    public String xulyTime(){
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM, hh:mm");
+        return sdf.format(date.getTime());
     }
 }

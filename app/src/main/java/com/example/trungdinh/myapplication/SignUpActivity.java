@@ -1,11 +1,14 @@
 package com.example.trungdinh.myapplication;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -59,7 +62,27 @@ public class SignUpActivity extends AppCompatActivity {
         // textview
         tvShowError = (TextView) findViewById(R.id.showError);
 
-        tvShowError.requestFocus();
+
+
+        edtTen.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d("HasFocus",""+hasFocus);
+                if(!hasFocus){
+                    hideKeyboard(v);
+                }
+            }
+        });
+
+        edtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.d("HasFocus",""+hasFocus);
+                if(!hasFocus){
+                    hideKeyboard(v);
+                }
+            }
+        });
 
 
 
@@ -69,16 +92,25 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(isEmty()){
                     if(CheckFormatEmail()){
+                        progressDialog.setMessage("Please wait..");
+                        progressDialog.show();
                         auth.createUserWithEmailAndPassword(edtTen.getText().toString(),edtPassword.getText().toString()).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
 
                             public void onComplete( Task<AuthResult> task) {
-
+                                progressDialog.dismiss();
                                 if(task.isSuccessful()){
                                     if(createAccountInDatabase()){
-                                        Toast.makeText(SignUpActivity.this,"Successfully: ",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(SignUpActivity.this,"Đăng ký thành công",Toast.LENGTH_SHORT).show();
+
+                                        Intent intent = new Intent();
+                                        intent.putExtra("email",edtTen.getText().toString());
+                                        intent.putExtra("pass",edtPassword.getText().toString());
+                                        setResult(Result_Code,intent);
+                                        finish();
+
                                     }
                                 }else{
-                                    Toast.makeText(SignUpActivity.this,"Error: ",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(SignUpActivity.this,"Error",Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -91,9 +123,8 @@ public class SignUpActivity extends AppCompatActivity {
         btBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //setResult(10);
+               // setResult(10);
                 finish();
-              //  overridePendingTransition(R.anim.activity_push_up_in,R.anim.activity_push_up_out);
             }
         });
 
@@ -104,13 +135,22 @@ public class SignUpActivity extends AppCompatActivity {
     public boolean createAccountInDatabase(){
         if(auth.getCurrentUser() != null){
             FirebaseUser user = auth.getCurrentUser();
-            User account = new User(user.getUid(),user.getEmail(),"images");
-            Log.d("giatri:",""+user.getUid()+":"+user.getEmail()+":"+user.getDisplayName());
-            root.child("user").push().setValue(account);
+            // xử lý tên
+            String[] name = user.getEmail().split("@");
+            User account = new User(user.getUid(),name[0],"images");
+           // Log.d("giatri:",name[0]);
+            root.child("user").child(account.getId()).push().setValue(account);
+            root.child("contact").push().setValue(account);
             return true;
         }
 
         return false;
+    }
+
+    // hide keyboard
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 

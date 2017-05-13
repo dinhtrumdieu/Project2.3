@@ -5,6 +5,9 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:layout_marginBottom="5dp"
+        android:clickable="true"
+        android:focusableInTouchMode="true"
         android:id="@+id/message"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">

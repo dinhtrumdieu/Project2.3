@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth auth;
     ProgressDialog progressDialog;
 
-    // Textview error
+    // Textview
     TextView tvShowError;
     TextView btDangKy;
 
@@ -42,8 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-       // Firebase.setAndroidContext(this);
-       // root = new Firebase("https://chatapp-26120.firebaseio.com/");
+
         auth = FirebaseAuth.getInstance();
 
         progressDialog = new ProgressDialog(this);
@@ -57,16 +56,21 @@ public class LoginActivity extends AppCompatActivity {
         btDangKy = (TextView) findViewById(R.id.btDangKy);
 
 
+        edtTen.setText("dinhtrum@gmail.com");
+        edtPassword.setText("123456");
 
+        // bắt sự kiện hasfocus of edtTen to
         edtTen.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+
                 if(!hasFocus){
                    hideKeyboard(v);
                 }
             }
         });
 
+        // bắt sự kiện hasfocus of edtPassword
         edtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -89,23 +93,18 @@ public class LoginActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 progressDialog.dismiss();
                                 if(task.isSuccessful()){
-                                    Toast.makeText(LoginActivity.this,"Successfully: ",Toast.LENGTH_SHORT).show();
-
                                     FirebaseUser user = auth.getCurrentUser();
                                     Log.d("giatri",""+user.getUid()+":"+user.getEmail()+":"+user.getDisplayName());
                                     Intent intent = new Intent(LoginActivity.this , MainActivity.class);
                                     intent.putExtra("id",user.getUid());
+                                    intent.putExtra("nameMy",user.getEmail().split("@")[0]);
                                     startActivity(intent);
-                                    overridePendingTransition(R.anim.activity_push_up_in,R.anim.activity_push_up_out);
                                 }else{
                                     Toast.makeText(LoginActivity.this,"Tài khoản hoặc mật khẩu sai!",Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
 
-//                       Intent intent = new Intent(LoginActivity.this , MainActivity.class);
-//                       intent.putExtra("id","102130103");
-//                       startActivity(intent);
                    }
                }
 
@@ -119,10 +118,23 @@ public class LoginActivity extends AppCompatActivity {
         btDangKy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                overridePendingTransition(R.anim.slide_out_right, R.anim.slide_out_left);
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivityForResult(intent,Request_Code);
+
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == Request_Code && data != null){
+                Log.d("Giatri: ",data.getStringExtra("email").toString()+""+data.getStringExtra("pass").toString());
+                edtTen.setText(data.getStringExtra("email").toString());
+                edtPassword.setText(data.getStringExtra("pass").toString());
+        }
+
     }
 
     // hide keyboard

@@ -10,10 +10,10 @@ import java.util.List;
  * Created by TrungDinh on 4/11/2017.
  */
 
-public class CustomViewPager extends FragmentPagerAdapter {
+public class ViewPagerAdapter extends FragmentPagerAdapter {
     private List<Fragment> mfragments;
 
-    public CustomViewPager(FragmentManager fm , List<Fragment> fragments) {
+    public ViewPagerAdapter(FragmentManager fm , List<Fragment> fragments) {
         super(fm);
         this.mfragments = fragments;
 
@@ -26,18 +26,7 @@ public class CustomViewPager extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
-    }
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-        switch (position){
-            case 0:
-                return "Tin nhắn";
-            case 1:
-                return "Danh Bạ";
-        }
-        return null;
+        return 3;
     }
 
 }

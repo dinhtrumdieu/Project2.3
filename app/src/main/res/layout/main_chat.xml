@@ -9,7 +9,7 @@
         android:paddingBottom="40dp"
         android:paddingTop="10dp"
         android:id="@+id/list_chat"
-        android:dividerHeight="16dp"
+        android:dividerHeight="8dp"
         android:divider="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,9 +17,11 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:background="#246161"
             android:gravity="center"
             android:orientation="horizontal"
@@ -27,78 +29,47 @@
             android:layout_width="match_parent"
             android:layout_height="40dp">
 
-            <TextView
-                android:layout_width="55dp"
+            <ImageView
+                android:id="@+id/imagesSent"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/ic_action_camera"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <EditText
+                android:textColor="#B7BBC2"
+                android:background="@drawable/apptheme_edit_text_holo_light"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="9"
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/colorPrimary"
                 android:hint="Message..."
-                android:textColorHint="#B7BBC2" />
-            <android.support.design.widget.FloatingActionButton
-                android:layout_weight="1"
-                android:id="@+id/btChat"
+                android:textColorHint="#808080" />
+
+            <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:src="@drawable/ic_send"
-                android:tint="@android:color/holo_blue_bright"
-                app:fabSize="mini" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:visibility="gone"
+                    android:layout_weight="1"
+                    android:id="@+id/btChat"
+                    android:src="@drawable/ic_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:padding="7dp"
+                    android:id="@+id/btAddImage"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_action_add2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </FrameLayout>
+
+
         </LinearLayout>
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabFb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="62dp"
-            android:src="@drawable/ic_action_add"
-            android:visibility="gone"
-            app:backgroundTint="@color/colorPrimary" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabYou"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="122dp"
-            android:src="@drawable/ic_action_add"
-            android:visibility="gone"
-            app:backgroundTint="@android:color/holo_blue_dark" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="182dp"
-            android:src="@drawable/ic_action_camera"
-            android:visibility="gone"
-            app:backgroundTint="@android:color/holo_purple" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabGoogle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="242dp"
-            android:src="@drawable/ic_action_add"
-            android:visibility="gone"
-            app:backgroundTint="@android:color/holo_orange_light" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabChoose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ic_action_add" />
     </RelativeLayout>
 
 </FrameLayout>

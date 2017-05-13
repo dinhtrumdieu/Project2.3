@@ -13,8 +13,8 @@ import android.widget.ListView;
 
 import com.example.trungdinh.myapplication.ChatActivity;
 import com.example.trungdinh.myapplication.R;
-import com.example.trungdinh.myapplication.adapter.CustomListView;
-import com.example.trungdinh.myapplication.models.User;
+import com.example.trungdinh.myapplication.adapter.ListViewItemAdapter;
+import com.example.trungdinh.myapplication.models.Message;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 /**
  * Created by TrungDinh on 4/11/2017.
@@ -32,11 +34,11 @@ public class FragmentMessage extends Fragment {
 
     DatabaseReference root = FirebaseDatabase.getInstance().getReference().getRoot();
     ListView lvUser;
-    ArrayList<User> list;
+    ArrayList<Message> list;
 
-    CustomListView adapter;
+    ListViewItemAdapter adapter;
 
-    String idMy;
+    String idMy , nameMy;
 
     @Nullable
     @Override
@@ -45,15 +47,17 @@ public class FragmentMessage extends Fragment {
         View view = inflater.inflate(R.layout.activity_main,container,false);
 
         lvUser = (ListView) view.findViewById(R.id.list_of_user);
+        OverScrollDecoratorHelper.setUpOverScroll(lvUser);
+
 
         list = new ArrayList<>();
-        adapter = new CustomListView(getActivity(), list);
+        adapter = new ListViewItemAdapter(getActivity(), list);
         lvUser.setAdapter(adapter);
 
-         idMy = getArguments().getString("ID");
+        idMy = getArguments().getString("ID");
+        nameMy = getArguments().getString("nameMy");
         Log.d("ID user:",idMy);
         // lấy dữ liệu từ firebase
-       // root.child("users").child(idMy).push().setValue(new User("lMerz6wKW2Sc8oVjfj692jjp6qu2","Trung Định","https://firebasestorage.googleapis.com/v0/b/chatapp-26120.appspot.com/o/mountains.jpg?alt=media&token=f95fcc80-2f98-4039-b330-a66bde049ed3"));
         getDataFromFireBase();
 
 
@@ -61,9 +65,14 @@ public class FragmentMessage extends Fragment {
         lvUser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               /* Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.fab_close);
+                view.startAnimation(animation);*/
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
                 intent.putExtra("IdFriend",list.get(position).getId());
                 intent.putExtra("IdMy",idMy);
+                intent.putExtra("name",list.get(position).getName());
+                intent.putExtra("nameMy",nameMy);
+                intent.putExtra("images",list.get(position).getImages());
                 startActivity(intent);
             }
         });
@@ -74,11 +83,12 @@ public class FragmentMessage extends Fragment {
     }
 
     public void getDataFromFireBase(){
-        root.child("users").child(idMy).addChildEventListener(new ChildEventListener() {
+        root.child("UserMessage").child(idMy).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                User user = dataSnapshot.getValue(User.class);
+                Message user = dataSnapshot.getValue(Message.class);
+
                 list.add(user);
                 adapter.notifyDataSetChanged();
 
@@ -86,22 +96,31 @@ public class FragmentMessage extends Fragment {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d("vodayononChildChanged","vodaynha");
+               Message user = dataSnapshot.getValue(Message.class);
+                for(int i = 0; i < list.size() ; i++){
+                    if(list.get(i).getId().equals(user.getId())){
+                        list.set(i,user);
+                        adapter.notifyDataSetChanged();
+                        break;
+                    }
+                }
 
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                Log.d("vodayonChildRemoved","vodaynha");
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                Log.d("vodayonChildMoved","vodaynha");
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.d("vodayonCancelled","vodaynha");
             }
 
         });

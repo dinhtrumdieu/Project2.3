@@ -77,7 +77,7 @@ public class ChatArrayAdapter extends ArrayAdapter<ChatMessage>{
 
             ChatMessage chat = getItem(position);
             ImageView imageView = (ImageView) view.findViewById(R.id.imagesSent);
-            Picasso.with(context).load(list.get(position).getMessageText()).into(imageView);
+            Picasso.with(context).load(list.get(position).getMessageText()).error(R.drawable.images).into(imageView);
 
             linear.setGravity(chat.isMine()? Gravity.LEFT:Gravity.RIGHT);
             if(chat.isMine()){

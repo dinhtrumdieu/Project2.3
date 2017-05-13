@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:id="@+id/scroll"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <ImageView
+            android:scaleType="centerCrop"
+            android:src="@drawable/hinhnen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:padding="5dp"
+            android:layout_margin="8dp"
+            android:layout_gravity="bottom"
+            app:civ_fill_color="@android:color/holo_red_dark"
+            app:civ_border_color="@android:color/holo_blue_dark"
+            android:src="@drawable/hinhnen1"
+            android:layout_width="80dp"
+            android:layout_height="80dp" />
+
+        <TextView
+            android:id="@+id/namebg"
+            android:textColor="#00796B"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="100dp"
+            android:layout_gravity="bottom"
+            android:text="Trung Định"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_below="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_margin="5dp"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/images"
+                android:src="@drawable/ic_action_people"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
+            <TextView
+                android:id="@+id/Fullname"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/images"
+                android:textColor="#800000"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:text="Full Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/name"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="30dp"
+                android:textSize="14dp"
+                android:textColor="#989898"
+                android:textStyle="bold"
+                android:text="Trung Định"
+                android:layout_toRightOf="@+id/images"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/images1"
+                android:src="@drawable/ic_action_mail"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
+            <TextView
+                android:id="@+id/Fullname1"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/images1"
+                android:textColor="#800000"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:text="Email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/email"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="30dp"
+                android:textSize="14dp"
+                android:textColor="#989898"
+                android:textStyle="bold"
+                android:text="dinhtrum@gmail.com"
+                android:layout_toRightOf="@+id/images1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/images2"
+                android:src="@drawable/ic_action_phone"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
+            <TextView
+                android:id="@+id/Fullname2"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/images2"
+                android:textColor="#800000"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:text="Phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="30dp"
+                android:textSize="14dp"
+                android:textColor="#989898"
+                android:textStyle="bold"
+                android:text="01685348267"
+                android:layout_toRightOf="@+id/images2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/images3"
+                android:src="@drawable/ic_action_address"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
+            <TextView
+                android:id="@+id/Fullname3"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/images3"
+                android:textColor="#800000"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:text="Adress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="30dp"
+                android:textSize="14dp"
+                android:textColor="#989898"
+                android:textStyle="bold"
+                android:text="35 Nguyễn Chánh"
+                android:layout_toRightOf="@+id/images3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"></RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
+</ScrollView>
